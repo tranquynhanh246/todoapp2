@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TodoItem from './TodoItem'; // Đảm bảo đường dẫn đúng
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -10,13 +11,20 @@ function App() {
 
   const handleAddTodo = () => {
     if (inputValue.trim() !== '') {
-      setTodos([...todos, inputValue]);
+      setTodos([...todos, { task: inputValue, completed: false }]);
       setInputValue('');
     }
   };
 
   const handleDeleteTodo = (index) => {
     const updatedTodos = todos.filter((_, i) => i !== index);
+    setTodos(updatedTodos);
+  };
+
+  const handleToggleComplete = (index) => {
+    const updatedTodos = todos.map((todo, i) =>
+      i === index ? { ...todo, completed: !todo.completed } : todo
+    );
     setTodos(updatedTodos);
   };
 
@@ -32,10 +40,13 @@ function App() {
       <button onClick={handleAddTodo}>Add</button>
       <ul>
         {todos.map((todo, index) => (
-          <li key={index}>
-            {todo}
-            <button onClick={() => handleDeleteTodo(index)}>Delete</button>
-          </li>
+          <TodoItem
+            key={index}
+            todo={todo}
+            index={index}
+            onDelete={handleDeleteTodo}
+            onToggleComplete={handleToggleComplete}
+          />
         ))}
       </ul>
     </div>
